@@ -11,7 +11,10 @@
     async function GET(url) {
         let urlObj = new URL(url);
         let response = await fetch(urlObj);
-        return response.json();           
+        if (response.status !== 200 && response.status !== 201) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        return await response.json();         
     }
 
     function sacarIdDeUrl(url) {
