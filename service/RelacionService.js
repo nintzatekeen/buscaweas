@@ -9,17 +9,4 @@ export class RelacionService {
         return await RequestService.GET(jikanUrl);
     }
 
-    static sacarIdDeUrl(url) {
-        try {
-            let expresion = /^(http[s]?\:\/\/)?myanimelist\.net\/anime\/(\d+)\/.*$/i;
-            let resultado = url.match(expresion);
-            if (resultado) {
-                return Number.parseInt(resultado[2]);
-            }
-            throw "El enlace proporcionado es incorrecto";
-        } catch (e) {
-            throw "Enlace mal formado";
-        }
-    }
-
 }

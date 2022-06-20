@@ -1,4 +1,5 @@
 import { Relacion } from "./model/Relacion.js";
+import { Utilidades } from "./service/Utilidades.js";
 
 window.onload = () => {
     document.getElementById("formulario").addEventListener("submit", e => {
@@ -7,7 +8,9 @@ window.onload = () => {
         relacion.borrarContenido();
         relacion.omitirResumenes = e.currentTarget.elements["resumenes"].checked;
         let url = e.currentTarget.elements["url"].value;
-        relacion.sagase(url).then(() => {
+        let id = Utilidades.sacarIdDeUrl(url);
+        let entry = {mal_id: id, url: url};
+        relacion.sagase(entry).then(() => {
             window.alert(`BÚSQUEDA REALIZADA.\nTOTAL: ${Object.keys(relacion.obtenidos).length} relacionados`);
             document.getElementById("buscando").innerHTML = "";
             console.log(relacion.obtenidos);

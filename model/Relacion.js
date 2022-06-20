@@ -3,13 +3,16 @@ import { Utilidades } from "../service/Utilidades.js";
 
 export class Relacion {
 
+    omitirResumenes;
+    obtenidos;
+
     constructor() {
         this.omitirResumenes = false;
         this.obtenidos = {};
     }
 
     anadirRelaciones(relaciones) {
-        let nuevasUrl = [];
+        let nuevasRelaciones = [];
         if (relaciones) {
             let omitidos = ["Adaptation"]; 
             if (this.omitirResumenes) {
@@ -17,17 +20,17 @@ export class Relacion {
             }
             relaciones.filter(r => !omitidos.includes(r.relation)).forEach(chingadera => {
                 for (let entry of chingadera.entry) {
-                    if (entry.type === "anime" && !this.obtenidos[entry.mal_id]) {
+                    if (Utilidades.validarRelacion(entry) && entry.type === "anime" && !this.obtenidos[entry.mal_id]) {
                         this.obtenidos[entry.mal_id] = {
                             mal_id: entry.mal_id,
                             url: entry.url
                         };
-                        nuevasUrl.push(entry.url);
+                        nuevasRelaciones.push(entry);
                     }
                 }
             });
         }
-        return nuevasUrl;
+        return nuevasRelaciones;
     }
 
     rellenarAnime(anime) {
@@ -41,11 +44,11 @@ export class Relacion {
         this.obtenidos = {};
     }
 
-    async sagase(url) {
+    async sagase(entry) {console.log(entry);
         return new Promise((resolve, reject) => setTimeout(async () => {
             try {
-                Utilidades.buscandoEn(url);
-                let id = RelacionService.sacarIdDeUrl(url);
+                Utilidades.buscandoEn(entry.url);
+                let id = /*RelacionService.sacarIdDeUrl(url)*/entry.mal_id;
                 let anime = await RelacionService.obtenerAnime(id);
                 if (anime) {
                     this.rellenarAnime(anime.data);
@@ -53,8 +56,8 @@ export class Relacion {
                 }
                 let relaciones = Utilidades.obtenerRelacionados(anime);
                 let nuevasRelaciones = this.anadirRelaciones(relaciones);
-                for await (let nuevaUrl of nuevasRelaciones) {
-                    await this.sagase(nuevaUrl);
+                for await (let nuevaRelacion of nuevasRelaciones) {
+                    await this.sagase(nuevaRelacion);
                 }
                 resolve();
             } catch (error) {

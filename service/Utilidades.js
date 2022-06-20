@@ -67,4 +67,21 @@ export class Utilidades {
             Utilidades.ordenarListado();
         }
     }
+
+    static sacarIdDeUrl(url) {
+        try {
+            let expresion = /^(http[s]?\:\/\/)?myanimelist\.net\/anime\/(\d+)\/.*$/i;
+            let resultado = url.match(expresion);
+            if (resultado) {
+                return Number.parseInt(resultado[2]);
+            }
+            throw "El enlace proporcionado es incorrecto";
+        } catch (e) {
+            throw "Enlace mal formado";
+        }
+    }
+
+    static validarRelacion(entry) {
+        return entry && entry.mal_id && entry.mal_id > 0;
+    }
 }
