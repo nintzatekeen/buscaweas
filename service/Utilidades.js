@@ -70,10 +70,10 @@ export class Utilidades {
 
     static sacarIdDeUrl(url) {
         try {
-            let expresion = /^(http[s]?\:\/\/)?myanimelist\.net\/anime\/(\d+)\/.*$/i;
+            let expresion = /^(https?\:\/\/)?(www\.)?myanimelist\.net\/anime\/(\d+)(\/.*)?$/i;
             let resultado = url.match(expresion);
             if (resultado) {
-                return Number.parseInt(resultado[2]);
+                return Number.parseInt(resultado[3]);
             }
             throw "El enlace proporcionado es incorrecto";
         } catch (e) {
