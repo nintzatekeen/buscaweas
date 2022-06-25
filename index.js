@@ -7,6 +7,7 @@ window.onload = () => {
         e.preventDefault();
         relacion.borrarContenido();
         relacion.omitirResumenes = e.currentTarget.elements["resumenes"].checked;
+        relacion.omitirOtros = e.currentTarget.elements["otros"].checked;
         let url = e.currentTarget.elements["url"].value;
         let id = Utilidades.sacarIdDeUrl(url);
         let entry = {mal_id: id, url: url};

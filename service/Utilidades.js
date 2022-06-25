@@ -51,13 +51,13 @@ export class Utilidades {
             enlaceElemento.href = anime.url;
             enlaceElemento.target = "_blank";
             
-            let cadenaFecha = anime.aired ? anime.aired.from : "";
-            let ano = (anime.aired && anime.aired.prop && anime.aired.prop.from) ? "" + anime.aired.prop.from.year : "";
-            let mes = (anime.aired && anime.aired.prop && anime.aired.prop.from) ? "" + anime.aired.prop.from.month : "";
+            let cadenaFecha = anime.aired?.from ?? "";
+            let ano = anime.aired?.prop?.from?.year ?? "";
+            let mes = anime.aired?.prop?.from?.month ?? "";
             if (mes.length < 2) {
                 mes = "0" + mes;
             }
-            let cadenaMesAno = (ano && mes) ? `${mes}/${ano}` : `${mes}${ano}`;
+            let cadenaMesAno = (ano && mes) ? `${mes}/${ano}` : `${(ano ? ano : "")}`;
             
             elemento.dataset.fecha = cadenaFecha;
             enlaceElemento.innerText = `${anime.title}${cadenaMesAno ? ` (${cadenaMesAno})` : ""}`;

@@ -4,9 +4,11 @@ import { Utilidades } from "../service/Utilidades.js";
 export class Relacion {
 
     omitirResumenes;
+    omitirOtros;
     obtenidos;
 
     constructor() {
+        this.omitirOtros = false;
         this.omitirResumenes = false;
         this.obtenidos = {};
     }
@@ -17,6 +19,9 @@ export class Relacion {
             let omitidos = ["Adaptation"]; 
             if (this.omitirResumenes) {
                 omitidos.push("Summary");
+            }
+            if (this.omitirOtros) {
+                omitidos.push("Other");
             }
             relaciones.filter(r => !omitidos.includes(r.relation)).forEach(chingadera => {
                 for (let entry of chingadera.entry) {
