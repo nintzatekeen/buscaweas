@@ -1,7 +1,7 @@
-import { PersonajesService } from "../service/PersonajesService.js";
+import { AnimeService } from "../service/AnimeService.js";
 
 //TODO: ADAPTARLO PARA ANIMES EN VEZ DE WAIFUS (Yukinoshita Yukino BESUTO WAIFU!!!1!)
-export class AnimwElement extends HTMLElement {
+export class AnimeElement extends HTMLElement {
     ALTURA_BUSCADOR = "1.5em";
 
     #timeout;
@@ -35,12 +35,11 @@ export class AnimwElement extends HTMLElement {
         this.style.display = "block";
         // this.style.alignItems = "start";
         // this.style.flexWrap = "wrap";
-        this.style.height = "500px";
         this.style.width = "200px";
 
         let buscador = document.createElement("input");
         buscador.setAttribute("type", "text");
-        buscador.setAttribute("placeholder", "Buscar waifu");
+        buscador.setAttribute("placeholder", "Buscar anime");
         buscador.addEventListener('input', e => this.#cambiarResultado(buscador.value));
         buscador.style.width = "100%";
         buscador.style.display = "block";
@@ -56,6 +55,7 @@ export class AnimwElement extends HTMLElement {
 
         let contenedorResultados = document.createElement("div");
         contenedorResultados.style.width = "100%";
+        contenedorResultados.style.height = "300px";
         contenedorResultados.style.display = "flex";
         contenedorResultados.style.flexDirection = "column";
         contenedorResultados.style.flexWrap = "wrap";
@@ -83,7 +83,7 @@ export class AnimwElement extends HTMLElement {
 
         
         window.addEventListener("click", e => {
-                if (e.target !== this && !document.querySelector("waifu-element").contains(e.target)) {
+                if (e.target !== this && !this.contains(e.target)) {
                     contenedorResultados.style.display = "none";
                 }
         });
@@ -155,7 +155,7 @@ export class AnimwElement extends HTMLElement {
                         this.constructor.#limpiarElemento(contenedorResultados);
                         tarjetaSiguiente = null;
                         try {
-                            this.#personajeSeleccionado = this.#arregloPersonajes.filter(p => p.id === Number.parseInt(tarjetaSeleccionada.dataset.id))[0];   
+                            this.#personajeSeleccionado = this.#arregloPersonajes.filter(p => p.mal_id === Number.parseInt(tarjetaSeleccionada.dataset.id))[0];   
                         } catch (error) {
                             console.error(error);
                         }
@@ -187,18 +187,20 @@ export class AnimwElement extends HTMLElement {
             contenedorResultados.style.display = "none";
         } else {
             this.#timeout = setTimeout(() => {
-                PersonajesService.buscarPersonaje({
-                    nombre: busqueda
+                AnimeService.buscarAnimes({
+                    q: busqueda,
+                    order_by: "favorites",
+                    sort: "desc"
                 }).then(johnson => {
                     this.#paginacion = johnson.pagination;
 
                     this.constructor.#limpiarElemento(contenedorResultados);
                     this.#tarjetaSeleccionada = null;
-                    this.#arregloPersonajes = PersonajesService.formatearPersonajes(johnson);
+                    this.#arregloPersonajes = johnson.data ?? [];
                     let ind = 0;
-                    for (const personaje of this.#arregloPersonajes) {
-                        if (!this.#estaExcluido(personaje)) {
-                            contenedorResultados.appendChild(this.#obtenerTarjeta(personaje, ind++));
+                    for (const anime of this.#arregloPersonajes) {
+                        if (!this.#estaExcluido(anime)) {
+                            contenedorResultados.appendChild(this.#obtenerTarjeta(anime, ind++));
                         }
                     }
 
@@ -221,7 +223,7 @@ export class AnimwElement extends HTMLElement {
         }
     }
 
-    #obtenerTarjeta(personaje, indice) {
+    #obtenerTarjeta(anime, indice) {
         let colorDeFondoResaltado = "Turquoise";
 
         let tarjeta = document.createElement("div");
@@ -240,7 +242,7 @@ export class AnimwElement extends HTMLElement {
 
         tarjeta.style.fontFamily = "Arial";
 
-        tarjeta.dataset.id = personaje.id;
+        tarjeta.dataset.id = anime.mal_id;
         tarjeta.dataset.indice = indice;
 
         tarjeta.classList.add("waifutarjeta");
@@ -252,7 +254,7 @@ export class AnimwElement extends HTMLElement {
         contenedorImagen.style.height= "90%";
         contenedorImagen.style.display = "block";
         contenedorImagen.style.objectFit = "cover";
-        contenedorImagen.style.backgroundImage = `url(${personaje.imagen})`;
+        contenedorImagen.style.backgroundImage = `url(${anime.images?.jpg?.image_url})`;
         contenedorImagen.style.backgroundSize = "100% auto";
         contenedorImagen.style.backgroundRepeat = "no-repeat";
         contenedorImagen.style.borderRadius = "5px";
@@ -267,7 +269,7 @@ export class AnimwElement extends HTMLElement {
         contenedorNombre.style.justifyContent = "initial";
         contenedorNombre.style.marginLeft = "1em";
 
-        contenedorNombre.innerHTML = personaje.nombre;
+        contenedorNombre.innerHTML = anime.title;
 
         tarjeta.appendChild(contenedorImagen);
         tarjeta.appendChild(contenedorNombre);
@@ -292,7 +294,7 @@ export class AnimwElement extends HTMLElement {
                 this.constructor.#limpiarElemento(padre);
             }
             try {
-                this.#personajeSeleccionado = this.#arregloPersonajes.filter(p => p.id == Number.parseInt(tarjeta.dataset.id))[0];
+                this.#personajeSeleccionado = this.#arregloPersonajes.filter(p => p.mal_id == Number.parseInt(tarjeta.dataset.id))[0];
             } catch (error) {
                 console.error(error);
             }
@@ -335,13 +337,15 @@ export class AnimwElement extends HTMLElement {
                 let currentPage = this.#paginacion.current_page;
                 let pagina = currentPage + 1;
                 if (hasNextPage) {
-                    PersonajesService.buscarPersonaje({
-                        nombre: nombre,
-                        pagina: pagina
+                    AnimeService.buscarAnimes({
+                        q: nombre,
+                        order_by: "favorites",
+                        sort: "desc",
+                        page: pagina
                     }).then(nuevos => {
                         if (nuevos) {
                             this.#paginacion = nuevos.pagination;
-                            let masWaifus = PersonajesService.formatearPersonajes(nuevos);
+                            let masWaifus = nuevos.data;
                             this.#arregloPersonajes = this.#arregloPersonajes.concat(masWaifus);
                             
                             let arregloElementosWaifu = document.querySelectorAll("#resultado > .waifutarjeta");
@@ -352,8 +356,8 @@ export class AnimwElement extends HTMLElement {
                                 let indice = ultimoIndice + 1;
                                 listaWaifus.removeChild(etiquetaCarga);
                                 for (const waifu of masWaifus) {
-                                    let repetido = listaWaifus.querySelector(`.waifutarjeta[data-id='${waifu.id}']`);
-                                    if (!repetido && !this.#estaExcluido(personaje)) {
+                                    let repetido = listaWaifus.querySelector(`.waifutarjeta[data-id='${waifu.mal_id}']`);
+                                    if (!repetido && !this.#estaExcluido(waifu)) {
                                         listaWaifus.appendChild(this.#obtenerTarjeta(waifu, indice++));
                                     }
                                 }
@@ -396,7 +400,7 @@ export class AnimwElement extends HTMLElement {
 
     eliminarExclusion(exclusion) {
         if (this.#exclusiones) {
-            let personajesExcluidos = this.#exclusiones.filter(pex => pex && pex.id && pex.id == exclusion.id);
+            let personajesExcluidos = this.#exclusiones.filter(pex => pex && pex.mal_id && pex.mal_id == exclusion.mal_id);
             if (personajesExcluidos) {
                 for (const personajeExluido of personajesExcluidos) {
                     let indiceDelElemento = this.#exclusiones.indexOf(personajeExluido);
@@ -412,7 +416,7 @@ export class AnimwElement extends HTMLElement {
 
     #estaExcluido(personaje) {
         if (this.#exclusiones) {
-            return this.#exclusiones.filter(pex => pex && pex.id && pex.id == personaje.id).length > 0;
+            return this.#exclusiones.filter(pex => pex && pex.mal_id && pex.mal_id == personaje.mal_id).length > 0;
         }
         return false;
     }
