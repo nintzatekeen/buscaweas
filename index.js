@@ -23,6 +23,7 @@ window.onload = () => {
         relacion.borrarContenido();
         relacion.omitirResumenes = e.currentTarget.elements["resumenes"].checked;
         relacion.omitirOtros = e.currentTarget.elements["otros"].checked;
+        relacion.omitirCharacter = e.currentTarget.elements["character"].checked;
         let url = e.currentTarget.elements["url"].value;
         let id = Utilidades.sacarIdDeUrl(url);
         let entry = {mal_id: id, url: url};

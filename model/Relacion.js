@@ -5,11 +5,13 @@ export class Relacion {
 
     omitirResumenes;
     omitirOtros;
+    omitirCharacter;
     obtenidos;
 
     constructor() {
         this.omitirOtros = false;
         this.omitirResumenes = false;
+        this.omitirCharacter = false;
         this.obtenidos = {};
     }
 
@@ -22,6 +24,9 @@ export class Relacion {
             }
             if (this.omitirOtros) {
                 omitidos.push("Other");
+            }
+            if (this.omitirCharacter) {
+                omitidos.push("Character");
             }
             relaciones.filter(r => !omitidos.includes(r.relation)).forEach(chingadera => {
                 for (let entry of chingadera.entry) {
