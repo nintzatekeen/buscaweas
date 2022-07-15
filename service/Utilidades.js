@@ -42,7 +42,7 @@ export class Utilidades {
             let contenedor = document.getElementById("contenedor");
             let listado = document.getElementById("listado");
             if (!listado) {
-                listado = document.createElement("ul");
+                listado = document.createElement("ol");
                 listado.id = "listado";
                 contenedor.appendChild(listado);
             }
