@@ -54,7 +54,7 @@ export class Relacion {
         this.obtenidos = {};
     }
 
-    async sagase(entry) {console.log(entry);
+    async sagase(entry) {
         return new Promise((resolve, reject) => setTimeout(async () => {
             try {
                 Utilidades.buscandoEn(entry.url);

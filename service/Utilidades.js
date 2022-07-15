@@ -84,4 +84,17 @@ export class Utilidades {
     static validarRelacion(entry) {
         return entry && entry.mal_id && entry.mal_id > 0;
     }
+
+    static obtenerDistintosTipos(obtenidos) {
+        let types = {};
+        Object.entries(obtenidos).forEach(obtenido => {
+            let type = obtenido[1].type;
+            if (!types[type]) {
+                types[type] = [obtenido[0]];
+            } else {
+                types[type].push(obtenido[0])
+            }
+        });
+        return types;
+    }
 }
