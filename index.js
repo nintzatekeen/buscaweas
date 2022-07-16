@@ -31,8 +31,9 @@ window.onload = () => {
             window.alert(`BÚSQUEDA REALIZADA.\nTOTAL: ${Object.keys(relacion.obtenidos).length} relacionados`);
             document.getElementById("buscando").innerHTML = "";
             let tipos = Utilidades.obtenerDistintosTipos(relacion.obtenidos);
-            console.log(tipos);
-            console.log(relacion.obtenidos);
+            Utilidades.dibujarFiltros(tipos);
+            // console.log(tipos);
+            // console.log(relacion.obtenidos);
         }).catch(err => {
             window.alert("Como el programador es un tolili, o el servidor está tocando las weas, la búsqueda ha fallado... Puta bida...");
             console.error(err);

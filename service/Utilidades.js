@@ -54,13 +54,15 @@ export class Utilidades {
             let cadenaFecha = anime.aired?.from ?? "";
             let ano = anime.aired?.prop?.from?.year ?? "";
             let mes = anime.aired?.prop?.from?.month ?? "";
-            if (mes.length < 2) {
-                mes = "0" + mes;
+            if (mes !== "") {
+                mes = `${mes}`.padStart(2, "0");
             }
             let cadenaMesAno = (ano && mes) ? `${mes}/${ano}` : `${(ano ? ano : "")}`;
             
             elemento.dataset.fecha = cadenaFecha;
-            enlaceElemento.innerText = `${anime.title}${cadenaMesAno ? ` (${cadenaMesAno})` : ""}`;
+            elemento.dataset.malId = anime.mal_id;
+            let tipo = anime.type ? `[${anime.type}]` : "[Desconocido]";
+            enlaceElemento.innerText = `${anime.title}${cadenaMesAno ? ` (${cadenaMesAno})` : ""} ${tipo}`;
     
             elemento.appendChild(enlaceElemento);
             listado.appendChild(elemento);
@@ -96,5 +98,37 @@ export class Utilidades {
             }
         });
         return types;
+    }
+
+    static dibujarFiltros(tipos) {
+        let contenedor = document.getElementById("filtros");
+        Object.keys(tipos).forEach(tipo => {
+            let valores = tipos[tipo];
+            let longitud = valores?.length ?? 0;
+            let caja = document.createElement("input");
+            caja.type = "checkbox";
+            caja.checked = true;
+            caja.id = tipo;
+            let etiqueta = document.createElement("label");
+            etiqueta.for = tipo;
+            etiqueta.innerText = `${tipo != "null" ? tipo : "Desconocido"} (${longitud})`;
+            let subcontenedor = document.createElement("div");
+            subcontenedor.style.width = "100%";
+            subcontenedor.appendChild(caja);
+            subcontenedor.appendChild(etiqueta);
+            contenedor.appendChild(subcontenedor);
+            caja.addEventListener("change", (ev) => {
+                if (ev.currentTarget.checked) {
+                    [...document.querySelectorAll("#listado > li")]
+                    .filter(item => valores.includes(item.dataset.malId))
+                    .forEach(elem => elem.style.display = "list-item");
+                } else {
+                    [...document.querySelectorAll("#listado > li")]
+                    .filter(item => valores.includes(item.dataset.malId))
+                    .forEach(elem => elem.style.display = "none");
+                }
+
+            });
+        });
     }
 }

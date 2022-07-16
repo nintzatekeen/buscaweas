@@ -51,6 +51,7 @@ export class Relacion {
 
     borrarContenido() {
         document.getElementById("contenedor").innerHTML = "";
+        document.getElementById("filtros").innerHTML = "";
         this.obtenidos = {};
     }
 
