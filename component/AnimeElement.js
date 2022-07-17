@@ -53,9 +53,10 @@ export class AnimeElement extends HTMLElement {
             }
         });
 
+        this.style.position = "relative";
+
         let contenedorResultados = document.createElement("div");
         contenedorResultados.style.width = "100%";
-        contenedorResultados.style.height = "300px";
         contenedorResultados.style.display = "flex";
         contenedorResultados.style.flexDirection = "column";
         contenedorResultados.style.flexWrap = "wrap";
@@ -66,13 +67,14 @@ export class AnimeElement extends HTMLElement {
         contenedorResultados.style.display = "none";
         contenedorResultados.style.overflowY = "scroll";
         contenedorResultados.style.overflowX = "hidden";
-        contenedorResultados.style.maxHeight = `calc(100% - ${this.ALTURA_BUSCADOR})`;
+        contenedorResultados.style.height = "object-fit";
+        contenedorResultados.style.maxHeight = `calc(400px - ${this.ALTURA_BUSCADOR})`;
         contenedorResultados.style.scrollbarWidth = "thin";
         contenedorResultados.style.scrollbarColor = "MediumVioletRed transparent";
         contenedorResultados.style.backgroundColor = "white";
         contenedorResultados.style.borderRadius = "5px";
+        contenedorResultados.style.position = "absolute";
         contenedorResultados.id = "resultado";
-
 
 
         buscador.addEventListener("focus", e => {
@@ -197,6 +199,11 @@ export class AnimeElement extends HTMLElement {
                     this.constructor.#limpiarElemento(contenedorResultados);
                     this.#tarjetaSeleccionada = null;
                     this.#arregloPersonajes = johnson.data ?? [];
+                    if (this.#arregloPersonajes.length > 0) {
+                        contenedorResultados.style.display = "";
+                    } else {
+                        contenedorResultados.style.display = "none";
+                    }
                     let ind = 0;
                     for (const anime of this.#arregloPersonajes) {
                         if (!this.#estaExcluido(anime)) {
@@ -216,7 +223,6 @@ export class AnimeElement extends HTMLElement {
                         primeraTarjeta.classList.add("seleccionado");
                         this.#tarjetaSeleccionada = primeraTarjeta;
                     }
-                    contenedorResultados.style.display = "";
                     contenedorResultados.scrollTo(0,0);
                 });
             }, 333);
