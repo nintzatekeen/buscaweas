@@ -52,6 +52,7 @@ export class Relacion {
     borrarContenido() {
         document.getElementById("contenedor").innerHTML = "";
         document.getElementById("filtros").innerHTML = "";
+        document.getElementById("capsTotales").innerHTML = "";
         this.obtenidos = {};
     }
 
@@ -63,7 +64,7 @@ export class Relacion {
                 let anime = await RelacionService.obtenerAnime(id);
                 if (anime) {
                     this.rellenarAnime(anime.data);
-                    Utilidades.anadirAlContenedor(anime.data);
+                    Utilidades.anadirAlContenedorTabla(anime.data);
                 }
                 let relaciones = Utilidades.obtenerRelacionados(anime);
                 let nuevasRelaciones = this.anadirRelaciones(relaciones);
