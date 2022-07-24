@@ -236,10 +236,12 @@ export class Utilidades {
                     [...document.querySelectorAll("#listado > tbody > tr")]
                     .filter(item => valores.includes(item.dataset.malId))
                     .forEach(elem => elem.style.display = "table-row");
+                    Utilidades.dibujarCapsTotales();
                 } else {
                     [...document.querySelectorAll("#listado > tbody > tr")]
                     .filter(item => valores.includes(item.dataset.malId))
                     .forEach(elem => elem.style.display = "none");
+                    Utilidades.dibujarCapsTotales();
                 }
                 Utilidades.ordenarListadoTabla();
             });
@@ -248,11 +250,14 @@ export class Utilidades {
 
     static calcularCapsTotales() {
         let total = 0;
-        let tdCaps = document.querySelectorAll("#listado > tbody  > tr > td.numCaps");
-        [...tdCaps].forEach(el => {
-            let caps = Number.parseInt(el.innerText);
-            if (caps && !isNaN(caps)) {
-                total += caps;
+        let trCaps = document.querySelectorAll("#listado > tbody  > tr");
+        [...trCaps].forEach(el => {
+            let tdCapsEl = el.querySelector("td.numCaps");
+            if (tdCapsEl && el.style.display !== "none") {
+                let caps = Number.parseInt(tdCapsEl.innerText);
+                if (caps && !isNaN(caps)) {
+                    total += caps;
+                }
             }
         });
         return total;
